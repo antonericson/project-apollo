@@ -17,7 +17,7 @@
         app:layout_constraintVertical_bias="0.25">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
+            android:id="@+id/hostSessionCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:src="@drawable/ic_launcher_background"
-                    app:srcCompat="?android:attr/actionModeFindDrawable" />
+                    app:srcCompat="@drawable/ic_launcher_foreground" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -55,6 +55,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/joinSessionCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -78,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:src="@drawable/ic_launcher_background"
-                    app:srcCompat="?android:attr/actionModeFindDrawable" />
+                    app:srcCompat="@drawable/ic_launcher_foreground" />
 
                 <TextView
                     android:layout_width="wrap_content"
