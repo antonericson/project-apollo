@@ -6,33 +6,32 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.adamratzman.spotify.auth.pkce.startSpotifyClientPkceLoginActivity
 import com.projectapollo.R
 import com.projectapollo.utils.SpotifyPkceLoginActivityImpl
 import com.projectapollo.utils.pkceClassBackTo
-import java.util.jar.Manifest
 
 class LoginActivity : AppCompatActivity() {
+
+    private val registerPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            isGranted: Boolean ->
+        if (isGranted) {
+            println("PERMISSION GRANTED")
+        } else {
+            println("PERMISSION DENIED")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val registerPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                isGranted: Boolean ->
-            if (isGranted) {
-                println("PERMISSION GRANTED")
-            } else {
-                println("PERMISSION DENIED")
-            }
-        }
-
-        when (PackageManager.PERMISSION_GRANTED) {
+        when {
             ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
+            ) == PackageManager.PERMISSION_GRANTED -> {
                 println("PERMISSION ALREADY GRANTED")
             }
             else -> {
@@ -42,14 +41,32 @@ class LoginActivity : AppCompatActivity() {
 
         val loginButton = findViewById<Button>(R.id.login_button)
         loginButton.setOnClickListener {
-            pkceClassBackTo = JoinOrHostActivity::class.java
-            startSpotifyClientPkceLoginActivity(SpotifyPkceLoginActivityImpl::class.java)
+            if (isPermissionGranted()) {
+                println("PERMISSION GRANTED MOVING TO JOIN OR HOST")
+                pkceClassBackTo = JoinOrHostActivity::class.java
+                startSpotifyClientPkceLoginActivity(SpotifyPkceLoginActivityImpl::class.java)
+            } else {
+                println("PERMISSIONS NOT GRANTED CHECK AGAIN")
+            }
+
         }
 
         val skipLoginButton = findViewById<Button>(R.id.skipLoginButton)
         skipLoginButton.setOnClickListener {
-            val intent = Intent(this, JoinOrHostActivity::class.java)
-            startActivity(intent)
+            if (isPermissionGranted()) {
+                println("PERMISSION GRANTED MOVING TO JOIN OR HOST")
+                val intent = Intent(this, JoinOrHostActivity::class.java)
+                startActivity(intent)
+            } else {
+                println("PERMISSIONS NOT GRANTED CHECK AGAIN")
+            }
         }
+    }
+
+    private fun isPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 }
