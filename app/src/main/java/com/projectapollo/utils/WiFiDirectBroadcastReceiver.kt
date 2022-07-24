@@ -3,13 +3,15 @@ package com.projectapollo.utils
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.wifi.p2p.WifiP2pManager
-import com.projectapollo.view.HostActivity
 
 class WiFiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
-    private val activity: HostActivity
+    private val activity: WifiP2pBaseActivity,
+    private val peerListListener: WifiP2pManager.PeerListListener,
+    private val connectionListener: WifiP2pManager.ConnectionInfoListener
 ) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
@@ -29,11 +31,20 @@ class WiFiDirectBroadcastReceiver(
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
                 // Call WifiP2pManager.requestPeers() to get a list of current peers
+                manager.requestPeers(channel, peerListListener)
                 println("PEERS CHANGED")
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 // Respond to new connection or disconnections
                 println("NEW CONNECT OR DISCONNECT")
+                manager.let { manager ->
+                    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    if (connectivityManager.activeNetwork != null) {
+                        // We are connected with the other device, request connection
+                        // info to find group owner IP
+                        manager.requestConnectionInfo(channel, connectionListener)
+                    }
+                }
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
                 // Respond to this device's wifi state changing

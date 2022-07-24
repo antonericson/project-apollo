@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.projectapollo"
-        minSdk 29
+        minSdk 28 //TODO: Set to 29, 28 temporarily to test with old hardware
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,8 @@ dependencies {
     implementation 'com.adamratzman:spotify-api-kotlin-core:3.8.6'
     implementation 'androidx.activity:activity:1.5.0'
     implementation 'androidx.fragment:fragment:1.5.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

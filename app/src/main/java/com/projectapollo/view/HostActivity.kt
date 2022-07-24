@@ -1,51 +1,44 @@
 package com.projectapollo.view
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
+import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.projectapollo.R
-import com.projectapollo.utils.WiFiDirectBroadcastReceiver
+import com.projectapollo.utils.WifiP2pBaseActivity
 
-class HostActivity : AppCompatActivity() {
-    val manager: WifiP2pManager? by lazy(LazyThreadSafetyMode.NONE) {
-        getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager?
+class HostActivity : WifiP2pBaseActivity() {
+
+    private val peers = mutableListOf<WifiP2pDevice>()
+    private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
+        val refreshedPeers = peerList.deviceList
+        if (refreshedPeers != peers) {
+            peers.clear()
+            peers.addAll(refreshedPeers)
+            // Perform any other updates needed based on the new list of
+            // peers connected to the Wi-Fi P2P network.
+        }
+
+        if (peers.isEmpty()) {
+            return@PeerListListener
+        }
     }
-    var channel: WifiP2pManager.Channel? = null
-    var receiver: BroadcastReceiver? = null
-    val intentFilter = IntentFilter().apply {
-        addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
+    private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
+        val groupOwnerAddress: String? = info.groupOwnerAddress.hostAddress
+        println("GROUP OWNER $groupOwnerAddress")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_host)
+        super.onCreate(savedInstanceState, R.layout.activity_host, peerListListener, connectionListener)
 
-        channel = manager?.initialize(this, mainLooper, null)
-        channel?.also {
-                channel ->
-            receiver = manager?.let { WiFiDirectBroadcastReceiver(it, channel, this) }
-        }
-    }
+        manager?.createGroup(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                println("GROUP CREATED READY FOR PEERS")
+            }
 
-    override fun onResume() {
-        super.onResume()
-        // Register the broadcast receiver with the intent values
-        receiver?.also { receiver ->
-            registerReceiver(receiver, intentFilter)
-        }
-    }
+            override fun onFailure(reason: Int) {
+                println("GROUP CREATE FAIL")
+            }
 
-    override fun onPause() {
-        super.onPause()
-        // Unregister the broadcast receiver
-        receiver?.also { receiver ->
-            unregisterReceiver(receiver)
-        }
+        })
     }
 }
