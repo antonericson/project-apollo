@@ -23,8 +23,8 @@ class HostActivity : WifiP2pBaseActivity() {
         }
     }
     private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
-        val groupOwnerAddress: String? = info.groupOwnerAddress.hostAddress
-        println("GROUP OWNER $groupOwnerAddress")
+        val isGroupOwner: Boolean = info.isGroupOwner
+        println("AM I GROUP OWNER $isGroupOwner")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

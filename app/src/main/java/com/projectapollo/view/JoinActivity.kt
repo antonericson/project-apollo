@@ -45,8 +45,6 @@ class JoinActivity : WifiP2pBaseActivity() {
         super.onCreate(savedInstanceState, R.layout.activity_join, peerListListener, connectionListener)
         deviceListRecyclerView = this.findViewById<RecyclerView>(R.id.deviceList)
 
-
-
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         deviceListRecyclerView.layoutManager = linearLayoutManager
