@@ -4,6 +4,7 @@ import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +18,10 @@ import com.projectapollo.R
  * TODO: Replace the implementation with code for your data type.
  */
 class WifiPeerListAdapter(
-    private val deviceList: MutableList<WifiP2pDevice>,
     private val manager: WifiP2pManager?,
     private val channel: WifiP2pManager.Channel?
 ) : RecyclerView.Adapter<WifiPeerListAdapter.ViewHolder>() {
+    private val deviceList = mutableListOf<WifiP2pDevice>()
 
     class ViewHolder(
         view: View,
@@ -83,4 +84,10 @@ class WifiPeerListAdapter(
         return deviceList.size
     }
 
+    fun addDevice(device: WifiP2pDevice) {
+        Log.d("DEBUG","ADD DEVICE CaLLED")
+        if (!deviceList.contains(device)) {
+            deviceList.add(device)
+        }
+    }
 }

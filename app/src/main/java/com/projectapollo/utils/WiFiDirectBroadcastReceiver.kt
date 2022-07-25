@@ -10,8 +10,6 @@ class WiFiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
     private val activity: WifiP2pBaseActivity,
-    private val peerListListener: WifiP2pManager.PeerListListener,
-    private val connectionListener: WifiP2pManager.ConnectionInfoListener
 ) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
@@ -31,7 +29,7 @@ class WiFiDirectBroadcastReceiver(
             }
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
                 // Call WifiP2pManager.requestPeers() to get a list of current peers
-                manager.requestPeers(channel, peerListListener)
+               // manager.requestPeers(channel, peerListListener)
                 println("PEERS CHANGED")
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
@@ -42,7 +40,7 @@ class WiFiDirectBroadcastReceiver(
                     if (connectivityManager.activeNetwork != null) {
                         // We are connected with the other device, request connection
                         // info to find group owner IP
-                        manager.requestConnectionInfo(channel, connectionListener)
+                        //manager.requestConnectionInfo(channel, connectionListener)
                     }
                 }
             }
